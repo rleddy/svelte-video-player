@@ -2,7 +2,7 @@
   import VideoPlayerClient from './VideoPlayerClient.svelte';
   import VideoPlayerServer from './VideoPlayerServer.svelte';
 
-  let isClient = typeof window !== 'undefined' ? true : false;
+  let isClient = (typeof window !== 'undefined') ? true : false;
 
   //-------------------------------------------------------------------------------------------------------------------
   // PROPS
@@ -28,10 +28,13 @@
   export let skipSeconds = 5;
   export let controlsOnPause = true;
   export let timeDisplay = false;
+  export let calc_source = true
 
   $: _width = parseInt(width);
   $: _height = parseInt(height);
   $: aspectRatio = _height / _width;
+
+  $: console.log(source)
 </script>
 
 {#if isClient}
@@ -56,7 +59,8 @@
     {skipSeconds}
     {aspectRatio}
     {controlsOnPause}
-    {timeDisplay} />
+    {timeDisplay}
+    {calc_source} />
 {:else}
   <VideoPlayerServer {playerBgColor} {borderRadius} {aspectRatio} />
 {/if}

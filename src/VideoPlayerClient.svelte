@@ -52,9 +52,14 @@
   export let aspectRatio;
   export let controlsOnPause;
   export let timeDisplay;
+  export let calc_source = true
 
-  $: _sources = prepareVideoSources(source);
+  let single_source = ""
+
+  $: _sources = calc_source ? prepareVideoSources(source) : [source]
   $: _skipSeconds = parseFloat(skipSeconds);
+
+  $: single_source = !(calc_source) ? source : ""
 
   //-------------------------------------------------------------------------------------------------------------------
   // REACTIVE CONFIG CONTEXT
@@ -126,6 +131,12 @@
   $: isSpinnerVisible = seeking || isBuffering;
 
   $: isCenterIconVisibile = !isVideoData || (paused && !isScrubbing);
+
+  let echo_source = false
+  $: {
+    echo_source = single_source
+    console.log(echo_source)
+  }
 
   //-------------------------------------------------------------------------------------------------------------------
   // EVENT HANDLERS
@@ -305,9 +316,13 @@
         on:waiting={onVideoWaiting}
         preload="none">
         <track kind="captions" />
-        {#each _sources as { src, type }}
-          <source {src} {type} />
-        {/each}
+        {#if calc_source}
+          {#each _sources as { src, type }}
+            <source {src} {type} />
+          {/each}
+        {:else} 
+            <source src={single_source} />
+        {/if}
         <p>Sorry, your browser doesn't support HTML5 videos.</p>
       </video>
 
